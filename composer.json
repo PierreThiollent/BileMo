@@ -19,6 +19,7 @@
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "5.3.*",
         "symfony/css-selector": "5.3.*",
+        "symfony/maker-bundle": "^1.35",
         "symfony/phpunit-bridge": "^5.3"
     },
     "config": {
