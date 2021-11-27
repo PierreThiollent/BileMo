@@ -1,2 +1,6 @@
 api_login_check:
   path: /api/login
+
+api_get_products:
+  path: /api/products
+  controller: App\Controller\ProductController::index
