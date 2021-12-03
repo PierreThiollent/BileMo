@@ -12,6 +12,7 @@
     "doctrine/doctrine-bundle": "^2.5",
     "doctrine/doctrine-migrations-bundle": "^3.2",
     "doctrine/orm": "^2.10",
+    "jms/serializer-bundle": "^4.0",
     "lexik/jwt-authentication-bundle": "^2.14",
     "symfony/apache-pack": "^1.0",
     "symfony/console": "5.3.*",
@@ -21,8 +22,8 @@
     "symfony/proxy-manager-bridge": "5.3.*",
     "symfony/runtime": "5.3.*",
     "symfony/security-bundle": "5.3.*",
-    "symfony/serializer": "5.3.*",
-    "symfony/yaml": "5.3.*"
+    "symfony/yaml": "5.3.*",
+    "willdurand/hateoas-bundle": "^2.3"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
