@@ -105,6 +105,63 @@ class ProductsTest extends WebTestCase
         self::assertArrayHasKey('last', $response['_links']);
     }
 
+    public function testGetOneProductWithoutAuthenticationShouldReturn401(): void
+    {
+        $this->client->request('GET', '/api/product/1');
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function testGetOneProductShouldReturnProduct(): void
+    {
+        $this->client = $this->createAuthenticatedClient();
+
+        $this->client->request('GET', '/api/product/1');
+        $response = $this->client->getResponse();
+
+        self::assertResponseStatusCodeSame(200);
+        self::assertJson($response->getContent());
+        self::assertResponseHasHeader('Content-Type', 'application/hal+json');
+
+
+        $product = $this->serializer->deserialize(
+            $response->getContent(),
+            Product::class,
+            'json',
+        );
+
+        self::assertInstanceOf(Product::class, $product);
+    }
+
+    // test get one product should contains json ld data
+
+    /**
+     * @throws JsonException
+     */
+    public function testGetOneProductShouldContainsJsonLdData(): void
+    {
+        $this->client = $this->createAuthenticatedClient();
+
+        $this->client->request('GET', '/api/product/1');
+        $response = $this->client->getResponse();
+
+        $response = json_decode(
+            $response->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertArrayHasKey('_links', $response);
+        self::assertArrayHasKey('self', $response['_links']);
+        self::assertArrayHasKey('href', $response['_links']['self']);
+
+        self::assertArrayHasKey('next', $response['_links']);
+        self::assertArrayHasKey('last', $response['_links']);
+    }
+
     protected function setUp(): void
     {
         $this->client = static::createClient();

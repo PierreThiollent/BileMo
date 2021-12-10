@@ -4,7 +4,34 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
 
+/**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "api_get_product",
+ *          absolute=true,
+ *          parameters = { "id" = "expr(object.getId())" }
+ *      ),
+ * )
+ * @Hateoas\Relation(
+ *      "next",
+ *      href = @Hateoas\Route(
+ *          "api_get_product",
+ *          absolute=true,
+ *          parameters = { "id" = "expr(object.getId() + 1)" }
+ *      ),
+ * )
+ * @Hateoas\Relation(
+ *      "last",
+ *      href = @Hateoas\Route(
+ *          "api_get_product",
+ *          absolute=true,
+ *          parameters = { "id" = "expr(object.getId() + 1)" }
+ *      ),
+ * )
+ */
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
