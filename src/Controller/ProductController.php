@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Service\PaginationService;
 use JMS\Serializer\SerializerInterface;
@@ -15,7 +16,7 @@ class ProductController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
-        private PaginationService $pagination,
+        private PaginationService   $pagination,
     ) {
     }
 
@@ -33,6 +34,16 @@ class ProductController extends AbstractController
         return new JsonResponse(
             $this->serializer->serialize($pagination, 'json'),
             Response::HTTP_PARTIAL_CONTENT,
+            ['Content-Type' => 'application/hal+json'],
+            true
+        );
+    }
+
+    public function show(Product $product, Request $request): JsonResponse
+    {
+        return new JsonResponse(
+            $this->serializer->serialize($product, 'json'),
+            Response::HTTP_OK,
             ['Content-Type' => 'application/hal+json'],
             true
         );
