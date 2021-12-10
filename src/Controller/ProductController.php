@@ -3,13 +3,38 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use App\Service\PaginationService;
+use JMS\Serializer\SerializerInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends AbstractController
 {
-    public function index(ProductRepository $repository): Response
+    public function __construct(
+        private SerializerInterface $serializer,
+        private PaginationService $pagination,
+    ) {
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function index(ProductRepository $repository, Request $request): JsonResponse
     {
-        return $this->json($repository->findAll());
+        $pagination = $this->pagination->paginate(
+            $repository,
+            'api_get_products',
+            $request->query->getInt('page', 1)
+        );
+
+        return new JsonResponse(
+            $this->serializer->serialize($pagination, 'json'),
+            Response::HTTP_PARTIAL_CONTENT,
+            ['Content-Type' => 'application/hal+json'],
+            true
+        );
     }
 }
