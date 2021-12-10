@@ -1,6 +1,15 @@
 api_login_check:
   path: /api/login
+  methods: POST
 
 api_get_products:
   path: /api/products
   controller: App\Controller\ProductController::index
+  methods: GET
+
+api_get_product:
+  path: /api/product/{id}
+  controller: App\Controller\ProductController::show
+  methods: GET
+  requirements:
+    id: '\d+'
