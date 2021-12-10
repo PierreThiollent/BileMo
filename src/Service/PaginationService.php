@@ -7,19 +7,17 @@ use Hateoas\Representation\PaginatedRepresentation;
 
 class PaginationService
 {
-    public function paginate($repository, string $route, int $page): PaginatedRepresentation
+    public function paginate(int $count, mixed $data, string $route, int $page): PaginatedRepresentation
     {
-        $items = $repository->findAll();
-
         return new PaginatedRepresentation(
-            new CollectionRepresentation($repository->findBy([], offset: $page * 10 - 10, limit: 10)),
+            new CollectionRepresentation($data),
             $route,
             [],
             page: $page,
-            limit: 10,
-            pages: ceil(count($items) / 10),
+            limit: 5,
+            pages: ceil($count / 5),
             absolute: true,
-            total: count($items),
+            total: $count,
         );
     }
 }
