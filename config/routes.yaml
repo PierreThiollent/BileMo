@@ -13,3 +13,10 @@ api_get_product:
   methods: GET
   requirements:
     id: '\d+'
+
+api_get_users:
+  path: /api/users
+  controller: App\Controller\UserController::index
+  methods: GET
+  requirements:
+    id: '\d+'
