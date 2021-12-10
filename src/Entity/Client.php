@@ -28,13 +28,13 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private string $name;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private string $address;
+    private ?string $address;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private string $city;
+    private ?string $city;
 
     #[ORM\Column(type: 'string', length: 45, nullable: true)]
-    private string $zipcode;
+    private ?string $zipcode;
 
     public function getId(): ?int
     {
