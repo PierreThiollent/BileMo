@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Application;
+namespace App\Tests\Functional;
 
 use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

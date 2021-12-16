@@ -6,30 +6,49 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Hateoas\Configuration\Annotation as Hateoas;
 
-/**
- * @Hateoas\Relation(
- *      "self",
- *      href = @Hateoas\Route(
- *          "api_get_product",
- *          absolute=true,
- *          parameters = { "id" = "expr(object.getId())" }
- *      ),
+/** @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "api_get_product",
+ *        parameters = {"id" = "expr(object.getId())"},
+ *        absolute = true
+ *    ),
  * )
  * @Hateoas\Relation(
- *      "next",
- *      href = @Hateoas\Route(
- *          "api_get_product",
- *          absolute=true,
- *          parameters = { "id" = "expr(object.getId() + 1)" }
- *      ),
+ *     "previous",
+ *     href = @Hateoas\Route(
+ *         "api_get_product",
+ *         parameters = {"id" = "1"},
+ *         absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"}, excludeIf="expr(object.getId() == 1)")
  * )
  * @Hateoas\Relation(
- *      "last",
- *      href = @Hateoas\Route(
- *          "api_get_product",
- *          absolute=true,
- *          parameters = { "id" = "expr(object.getId() + 1)" }
- *      ),
+ *     "next",
+ *     href = @Hateoas\Route(
+ *         "api_get_product",
+ *         parameters = {"id" = "expr(object.getId() + 1)"},
+ *         absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
+ * @Hateoas\Relation(
+ *     "first",
+ *     href = @Hateoas\Route(
+ *         "api_get_product",
+ *         parameters = {"id" = "1"},
+ *         absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
+ * )
+ * @Hateoas\Relation(
+ *     "last",
+ *     href = @Hateoas\Route(
+ *         "api_get_product",
+ *         parameters = {"id" = "expr(object.getId())"},
+ *         absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"detail"})
  * )
  */
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
