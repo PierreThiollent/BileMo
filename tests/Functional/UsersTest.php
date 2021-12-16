@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Application;
+namespace App\Tests\Functional;
 
 use App\Entity\User;
 

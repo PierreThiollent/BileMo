@@ -1,18 +1,12 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Functional;
 
 use App\Entity\Product;
-use JMS\Serializer\Serializer;
 use JsonException;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ProductsTest extends WebTestCase
+class ProductsTest extends AbstractTest
 {
-    private KernelBrowser $client;
-    private Serializer $serializer;
-
     public function testGetAllProductsWithoutJWTShouldReturn401(): void
     {
         $this->client->request('GET', '/api/products');
@@ -54,30 +48,6 @@ class ProductsTest extends WebTestCase
     /**
      * @throws JsonException
      */
-    private function createAuthenticatedClient(): KernelBrowser
-    {
-        $this->client->request(
-            'POST',
-            '/api/login',
-            server: ['CONTENT_TYPE' => 'application/json'],
-            content: '{"email":"pierre.thiollent76@gmail.com","password":"test"}'
-        );
-
-        $data = json_decode(
-            $this->client->getResponse()->getContent(),
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
-
-        $this->client->setServerParameter('HTTP_Authorization', "Bearer {$data['token']}");
-
-        return $this->client;
-    }
-
-    /**
-     * @throws JsonException
-     */
     public function testGetAllProductsShouldReturnJsonLdData(): void
     {
         $this->client = $this->createAuthenticatedClient();
@@ -102,7 +72,6 @@ class ProductsTest extends WebTestCase
         self::assertArrayHasKey('href', $response['_links']['self']);
 
         self::assertArrayHasKey('first', $response['_links']);
-        self::assertArrayHasKey('last', $response['_links']);
     }
 
     public function testGetOneProductWithoutAuthenticationShouldReturn401(): void
@@ -125,7 +94,6 @@ class ProductsTest extends WebTestCase
         self::assertJson($response->getContent());
         self::assertResponseHasHeader('Content-Type', 'application/hal+json');
 
-
         $product = $this->serializer->deserialize(
             $response->getContent(),
             Product::class,
@@ -134,8 +102,6 @@ class ProductsTest extends WebTestCase
 
         self::assertInstanceOf(Product::class, $product);
     }
-
-    // test get one product should contains json ld data
 
     /**
      * @throws JsonException
@@ -159,12 +125,5 @@ class ProductsTest extends WebTestCase
         self::assertArrayHasKey('href', $response['_links']['self']);
 
         self::assertArrayHasKey('next', $response['_links']);
-        self::assertArrayHasKey('last', $response['_links']);
-    }
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-        $this->serializer = static::getContainer()->get('jms_serializer');
     }
 }
