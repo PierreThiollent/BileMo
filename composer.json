@@ -69,7 +69,7 @@
       "@auto-scripts"
     ],
     "test": "php ./vendor/bin/phpunit --testdox",
-    "fix": "./vendor/bin/php-cs-fixer fix src"
+    "fix": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix src"
   },
   "conflict": {
     "symfony/symfony": "*"
