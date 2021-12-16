@@ -23,7 +23,7 @@ class User
     #[ORM\Column(type: 'string', length: 255)]
     private string $lastname;
 
-    /** @Serializer\Exclude */
+    #[Serializer\Exclude]
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     private Client $client;
