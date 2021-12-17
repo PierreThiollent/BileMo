@@ -18,5 +18,10 @@ api_get_users:
   path: /api/users
   controller: App\Controller\UserController::index
   methods: GET
+
+api_get_user:
+  path: /api/user/{id}
+  controller: App\Controller\UserController::show
+  methods: GET
   requirements:
     id: '\d+'

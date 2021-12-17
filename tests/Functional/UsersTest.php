@@ -22,7 +22,7 @@ class UsersTest extends AbstractTest
         $this->client->request('GET', '/api/users');
         $response = $this->client->getResponse();
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseStatusCodeSame(206);
         self::assertJson($response->getContent());
         self::assertResponseHasHeader('Content-Type', 'application/hal+json');
 
@@ -72,5 +72,65 @@ class UsersTest extends AbstractTest
 
         self::assertArrayHasKey('first', $response['_links']);
         self::assertArrayHasKey('last', $response['_links']);
+    }
+
+    public function testGetOneUserWithoutTokenShouldReturn401(): void
+    {
+        $this->client->request('GET', '/api/user/1');
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function testGetOneUserShouldReturnUser(): void
+    {
+        $this->client = $this->createAuthenticatedClient();
+
+        $this->client->request('GET', '/api/user/1');
+        $response = $this->client->getResponse();
+
+        self::assertResponseStatusCodeSame(200);
+        self::assertJson($response->getContent());
+        self::assertResponseHasHeader('Content-Type', 'application/hal+json');
+
+        $user = $this->serializer->deserialize(
+            $response->getContent(),
+            User::class,
+            'json',
+        );
+
+        self::assertInstanceOf(User::class, $user);
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function testGetOneUserShouldReturnJsonLdData(): void
+    {
+        $this->client = $this->createAuthenticatedClient();
+
+        $this->client->request('GET', '/api/user/1');
+        $response = $this->client->getResponse();
+
+        $response = json_decode(
+            $response->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertArrayHasKey('_links', $response);
+        self::assertArrayHasKey('self', $response['_links']);
+        self::assertArrayHasKey('href', $response['_links']['self']);
+
+        self::assertArrayHasKey('next', $response['_links']);
+        self::assertArrayHasKey('href', $response['_links']['next']);
+
+        self::assertArrayHasKey('first', $response['_links']);
+        self::assertArrayHasKey('href', $response['_links']['first']);
+
+        self::assertArrayHasKey('last', $response['_links']);
+        self::assertArrayHasKey('href', $response['_links']['last']);
     }
 }

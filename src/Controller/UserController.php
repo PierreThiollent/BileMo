@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\PaginationService;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +16,7 @@ class UserController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
-        private PaginationService   $pagination,
+        private PaginationService $pagination,
     ) {
     }
 
@@ -29,9 +31,31 @@ class UserController extends AbstractController
             $page
         );
 
+        $context = SerializationContext::create()
+            ->setGroups([
+                'Default',
+                'list',
+            ]);
+
         return new JsonResponse(
-            $this->serializer->serialize($pagination, 'json'),
+            $this->serializer->serialize($pagination, 'json', $context),
             Response::HTTP_PARTIAL_CONTENT,
+            ['Content-Type' => 'application/hal+json'],
+            true
+        );
+    }
+
+    public function show(User $user): JsonResponse
+    {
+        $context = SerializationContext::create()
+            ->setGroups([
+                'Default',
+                'detail',
+            ]);
+
+        return new JsonResponse(
+            $this->serializer->serialize($user, 'json'),
+            Response::HTTP_OK,
             ['Content-Type' => 'application/hal+json'],
             true
         );
