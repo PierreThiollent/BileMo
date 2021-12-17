@@ -25,3 +25,10 @@ api_get_user:
   methods: GET
   requirements:
     id: '\d+'
+
+api_delete_user:
+  path: /api/user/{id}
+  controller: App\Controller\UserController::delete
+  methods: DELETE
+  requirements:
+    id: '\d+'
