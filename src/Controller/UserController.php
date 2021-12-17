@@ -60,4 +60,24 @@ class UserController extends AbstractController
             true
         );
     }
+
+    public function delete(User $user): JsonResponse
+    {
+        if ($user->getClient() !== $this->getUser()) {
+            return new JsonResponse(
+                ['message' => 'You are not allowed to delete this user', 'code' => 403],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return new JsonResponse(
+            ['message' => "L'utilisateur a bien été supprimé"],
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json'],
+        );
+    }
 }
