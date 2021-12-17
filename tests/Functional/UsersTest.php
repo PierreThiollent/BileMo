@@ -87,7 +87,7 @@ class UsersTest extends AbstractTest
     {
         $this->client = $this->createAuthenticatedClient();
 
-        $this->client->request('GET', '/api/user/1');
+        $this->client->request('GET', '/api/user/2');
         $response = $this->client->getResponse();
 
         self::assertResponseStatusCodeSame(200);
@@ -110,7 +110,7 @@ class UsersTest extends AbstractTest
     {
         $this->client = $this->createAuthenticatedClient();
 
-        $this->client->request('GET', '/api/user/1');
+        $this->client->request('GET', '/api/user/2');
         $response = $this->client->getResponse();
 
         $response = json_decode(
@@ -132,5 +132,57 @@ class UsersTest extends AbstractTest
 
         self::assertArrayHasKey('last', $response['_links']);
         self::assertArrayHasKey('href', $response['_links']['last']);
+    }
+
+    public function testDeleteOneUserWithoutTokenShouldReturn401(): void
+    {
+        $this->client->request('DELETE', '/api/user/1');
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function testDeleteOneUserShouldReturn200(): void
+    {
+        $this->client = $this->createAuthenticatedClient();
+
+        $this->client->request('DELETE', '/api/user/2');
+        self::assertResponseStatusCodeSame(200);
+        self::assertJson($this->client->getResponse()->getContent());
+
+        $response = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertArrayHasKey('message', $response);
+        self::assertSame('L\'utilisateur a bien été supprimé', $response['message']);
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function testDeleteUserOfAnotherClientShouldReturn403(): void
+    {
+        $this->client = $this->createAuthenticatedClient();
+
+        $this->client->request('DELETE', '/api/user/5');
+        self::assertResponseStatusCodeSame(403);
+
+        $response = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertArrayHasKey('message', $response);
+        self::assertSame('You are not allowed to delete this user', $response['message']);
+
+        self::assertArrayHasKey('code', $response);
+        self::assertSame(403, $response['code']);
     }
 }
